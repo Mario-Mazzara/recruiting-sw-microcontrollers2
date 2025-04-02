@@ -22,7 +22,7 @@ typedef struct {
     State_t startingState;
     Event_t event;
     State_t nextState;
-    //void (*action)(void);
+    void (*action)(void);
 } StateTransition_t;
 
 
