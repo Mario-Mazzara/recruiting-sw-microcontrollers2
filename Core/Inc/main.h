@@ -76,8 +76,6 @@ void Error_Handler(void);
 
 /* USER CODE BEGIN Private defines */
 
-#define BUTTON_RELEASED                       0U
-#define BUTTON_PRESSED                        1U
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus

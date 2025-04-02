@@ -1,6 +1,8 @@
 #ifndef SM_H
 #define SM_H
 
+#include "stm32f4xx_hal.h"
+
 typedef enum {
     STATE_INIT,
     STATE_WAIT_REQUEST,
@@ -34,11 +36,12 @@ extern StateTransition_t transitions[];
 /**
  * \brief State machine initialization
  */
-void sm_init();
+void sm_init(TIM_HandleTypeDef* _htim, UART_HandleTypeDef* _huart);
 /**
  * \brief updates the state machine given an event
  * \param event, event that triggers state the transition
  */
 void sm_update(Event_t event);
 
+void Handle_Error(void);
 #endif

@@ -19,6 +19,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "state_machine.h"
+#include "defines.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -46,7 +47,6 @@ UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
 
-__IO uint32_t BspButtonState = BUTTON_RELEASED;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -71,7 +71,7 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
-    sm_init();
+    sm_init(&htim2,&huart2);
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -103,7 +103,7 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-
+      
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
@@ -299,16 +299,7 @@ void Error_Handler(void)
 {
   /* USER CODE BEGIN Error_Handler_Debug */
   /* User can add his own implementation to report the HAL error return state */
-  sm_update(EVENT_ERROR_OCCURRED);
-  uint8_t MSG[] = "ERROR";
-  while (1)
-  {
-    HAL_UART_Transmit(&huart2,MSG,sizeof(MSG),100);
-    if (BspButtonState == BUTTON_PRESSED)
-    {
-        NVIC_SystemReset();
-    }
-  }
+  Handle_Error();
   /* USER CODE END Error_Handler_Debug */
 }
 
