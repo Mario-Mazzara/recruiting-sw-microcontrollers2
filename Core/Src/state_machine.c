@@ -31,9 +31,7 @@ void CLI_stop(){
 }
 
 void listening_handler(void){
-    //HAL_UART_Transmit(huart,"Inside listening",20,100);
-    /* uint32_t data = read_sensor();
-    HAL_UART_Transmit(huart,data,size,100); */
+
     if(AVG_Active && !Noise_Active){
         send_data("moving average");
     }else if ( !AVG_Active && Noise_Active ){
@@ -70,10 +68,12 @@ void LED_PWM_Stop(void) {
 void Pause_in(){
     LED_PWM_Start();
     CLI_start();
+    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_RESET);
 }
 void Pause_out(){
     LED_PWM_Stop();
     CLI_stop();
+    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_SET);
 }
 const char* stateToString(State_t state) {
     switch (state) {
@@ -107,12 +107,16 @@ void printEvent(Event_t event) {
     HAL_UART_Transmit(huart, (uint8_t*)eventStr, strlen(eventStr), HAL_MAX_DELAY);
     HAL_UART_Transmit(huart, (uint8_t*)"\n\r", 2, HAL_MAX_DELAY); // New line for better readability
 }
+void wait_to_listen(){
+    CLI_stop();
+    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_SET);
+}
 
 StateTransition_t transitions[]={
     {STATE_INIT,EVENT_NONE,STATE_WAIT_REQUEST,CLI_start},
     {STATE_INIT,EVENT_ERROR_OCCURRED,STATE_ERROR,NULL},
 
-    {STATE_WAIT_REQUEST,EVENT_BUTTON_PRESS,STATE_LISTENING,CLI_stop},
+    {STATE_WAIT_REQUEST,EVENT_BUTTON_PRESS,STATE_LISTENING,wait_to_listen},
     {STATE_WAIT_REQUEST,EVENT_ERROR_OCCURRED,STATE_ERROR,CLI_stop},
 
     {STATE_LISTENING,EVENT_BUTTON_PRESS,STATE_PAUSE,Pause_in},
