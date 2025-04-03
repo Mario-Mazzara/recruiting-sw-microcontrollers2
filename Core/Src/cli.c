@@ -43,10 +43,6 @@ void processCommand(char *cmd)
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
-    if(CLI_Active == 0){
-        HAL_UART_Transmit(huart,"not active\n\r",13,100);
-        return;
-    }
     if (huart->Instance == USART2)
     {
         // Check for end-of-line characters (CR or LF)
@@ -55,7 +51,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
             commandBuffer[cmdIndex] = '\0';
 
             // Process command if there's any content
-            if (cmdIndex > 0)
+            if (cmdIndex > 0 && CLI_Active != 0)
             {
                 processCommand(commandBuffer);
             }
