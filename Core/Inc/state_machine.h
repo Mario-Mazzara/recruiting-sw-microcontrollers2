@@ -45,4 +45,8 @@ void sm_init(TIM_HandleTypeDef* _htim, UART_HandleTypeDef* _huart);
 void sm_update(Event_t event);
 
 void Handle_Error(void);
+void listening_handler(void);
+void pause_handler(void);
+void wait_request_handler(void);
+void warning_handler(void);
 #endif

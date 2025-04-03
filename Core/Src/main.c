@@ -18,11 +18,12 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "state_machine.h"
-#include "defines.h"
+
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "state_machine.h"
+#include "defines.h"
+#include "cli.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -80,7 +81,7 @@ int main(void)
   HAL_Init();
 
   /* USER CODE BEGIN Init */
-
+    cli_init(&huart2);
   /* USER CODE END Init */
 
   /* Configure the system clock */
@@ -100,8 +101,26 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  sm_update(EVENT_NONE); // move from init to wait request
   while (1)
   {
+      switch(currentState){
+          case STATE_LISTENING:
+              listening_handler();
+              break;
+          case STATE_WAIT_REQUEST:
+              wait_request_handler();
+              break;
+          case STATE_PAUSE:
+              pause_handler();
+              break;
+          case STATE_WARNING:
+              warning_handler();
+              break;
+          case STATE_ERROR:
+              Error_Handler();
+              break;
+      }
     /* USER CODE END WHILE */
     /* USER CODE BEGIN 3 */
   }
@@ -296,6 +315,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
   if(GPIO_Pin == B1_Pin) {
     HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_SET);
     BspButtonState = BUTTON_PRESSED;
+    sm_update(EVENT_BUTTON_PRESS);
   } else {
       __NOP();
   }
@@ -325,8 +345,6 @@ void Error_Handler(void)
 void assert_failed(uint8_t *file, uint32_t line)
 {
   /* USER CODE BEGIN 6 */
-  /* User can add his own implementation to report the file name and line number,
-     ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
   /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */
