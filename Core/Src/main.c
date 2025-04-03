@@ -103,7 +103,6 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-      
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
@@ -282,13 +281,25 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(LD2_GPIO_Port, &GPIO_InitStruct);
 
+  /* EXTI interrupt init*/
+  HAL_NVIC_SetPriority(EXTI15_10_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
+
   /* USER CODE BEGIN MX_GPIO_Init_2 */
 
   /* USER CODE END MX_GPIO_Init_2 */
 }
 
 /* USER CODE BEGIN 4 */
-
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+{
+  if(GPIO_Pin == B1_Pin) {
+    HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_SET);
+    BspButtonState = BUTTON_PRESSED;
+  } else {
+      __NOP();
+  }
+}
 /* USER CODE END 4 */
 
 /**

@@ -2,6 +2,7 @@
 #define SM_H
 
 #include "stm32f4xx_hal.h"
+#include <stdint.h>
 
 typedef enum {
     STATE_INIT,
@@ -31,9 +32,9 @@ typedef struct {
 
 extern State_t currentState;
 extern StateTransition_t transitions[];
+extern __IO uint32_t BspButtonState;
 
-
-/**
+/*
  * \brief State machine initialization
  */
 void sm_init(TIM_HandleTypeDef* _htim, UART_HandleTypeDef* _huart);
