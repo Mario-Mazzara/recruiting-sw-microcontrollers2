@@ -24,6 +24,7 @@
 #include "state_machine.h"
 #include "defines.h"
 #include "cli.h"
+#include "send.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -103,6 +104,7 @@ int main(void)
   MX_ADC1_Init();
   /* USER CODE BEGIN 2 */
 
+    send_init(&huart2,&hadc1);
     cli_init(&huart2);
   /* USER CODE END 2 */
 
@@ -388,10 +390,11 @@ static void MX_GPIO_Init(void)
 /* USER CODE BEGIN 4 */
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
-  if(GPIO_Pin == B1_Pin) {
-/*     HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_SET); */
-    BspButtonState = BUTTON_PRESSED;
-    sm_update(EVENT_BUTTON_PRESS);
+    if (GPIO_Pin == GPIO_PIN_0) {
+        hall_state = HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0);
+    } else if(GPIO_Pin == B1_Pin) {
+        BspButtonState = BUTTON_PRESSED;
+        sm_update(EVENT_BUTTON_PRESS);
   } else {
       __NOP();
   }

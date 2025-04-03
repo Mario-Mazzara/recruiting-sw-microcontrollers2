@@ -4,7 +4,7 @@
 #include "defines.h"
 #include "cli.h"
 #include <string.h>
-
+#include <send.h>
 static TIM_HandleTypeDef* htim;
 static UART_HandleTypeDef* huart;
 
@@ -34,6 +34,8 @@ void listening_handler(void){
     //HAL_UART_Transmit(huart,"Inside listening",20,100);
     /* uint32_t data = read_sensor();
     HAL_UART_Transmit(huart,data,size,100); */
+    send_data("raw");
+    HAL_Delay(100);
 
 }
 void pause_handler(void){

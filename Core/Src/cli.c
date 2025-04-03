@@ -35,7 +35,7 @@ void processCommand(char *cmd)
         Noise_Active = 0;
         AVG_Active = 1;
     }
-    else if(strcmp(cmd, "random noise") == 0) {
+else if(strcmp(cmd, "random noise") == 0) {
         AVG_Active = 0;
         Noise_Active = 1;
     }
