@@ -3,6 +3,7 @@
 #include "stm32f4xx_hal.h"
 #include "defines.h"
 #include "cli.h"
+#include <string.h>
 
 static TIM_HandleTypeDef* htim;
 static UART_HandleTypeDef* huart;
@@ -29,10 +30,21 @@ void CLI_stop(){
     CLI_Active = 0;
 }
 
-void listening_handler(void){}
-void pause_handler(void){}
-void wait_request_handler(void){}
-void warning_handler(void){}
+void listening_handler(void){
+    //HAL_UART_Transmit(huart,"Inside listening",20,100);
+    /* uint32_t data = read_sensor();
+    HAL_UART_Transmit(huart,data,size,100); */
+
+}
+void pause_handler(void){
+    //HAL_UART_Transmit(huart,"Inside pause",20,100);
+}
+void wait_request_handler(void){
+    //HAL_UART_Transmit(huart,"Inside Wait Request",20,100);
+}
+void warning_handler(void){
+    //HAL_UART_Transmit(huart,"Inside Warning",15,100);
+}
 
 void LED_PWM_Start(void) {
     if (HAL_TIM_PWM_Start(htim, TIM_CHANNEL_1) != HAL_OK)
@@ -55,6 +67,38 @@ void Pause_in(){
 void Pause_out(){
     LED_PWM_Stop();
     CLI_stop();
+}
+const char* stateToString(State_t state) {
+    switch (state) {
+        case STATE_INIT: return "STATE_INIT";
+        case STATE_WAIT_REQUEST: return "STATE_WAIT_REQUEST";
+        case STATE_LISTENING: return "STATE_LISTENING";
+        case STATE_PAUSE: return "STATE_PAUSE";
+        case STATE_WARNING: return "STATE_WARNING";
+        case STATE_ERROR: return "STATE_ERROR";
+        default: return "UNKNOWN_STATE";
+    }
+}
+
+const char* eventToString(Event_t event) {
+    switch (event) {
+        case EVENT_NONE: return "EVENT_NONE";
+        case EVENT_BUTTON_PRESS: return "EVENT_BUTTON_PRESS";
+        case EVENT_SENSOR_STALL: return "EVENT_SENSOR_STALL";
+        case EVENT_ERROR_OCCURRED: return "EVENT_ERROR_OCCURRED";
+        default: return "UNKNOWN_EVENT";
+    }
+}
+void printState(State_t state) {
+    const char* stateStr = stateToString(state);
+    HAL_UART_Transmit(huart, (uint8_t*)stateStr, strlen(stateStr), HAL_MAX_DELAY);
+    HAL_UART_Transmit(huart, (uint8_t*)"\n", 1, HAL_MAX_DELAY); // New line for better readability
+}
+
+void printEvent(Event_t event) {
+    const char* eventStr = eventToString(event);
+    HAL_UART_Transmit(huart, (uint8_t*)eventStr, strlen(eventStr), HAL_MAX_DELAY);
+    HAL_UART_Transmit(huart, (uint8_t*)"\n\r", 2, HAL_MAX_DELAY); // New line for better readability
 }
 
 StateTransition_t transitions[]={
@@ -90,6 +134,12 @@ void sm_update(Event_t event){
             if(transitions[i].action != NULL) transitions[i].action();
 
             currentState= transitions[i].nextState;
+
+            printEvent(event);
+            printState(transitions[i].startingState);
+            printState(transitions[i].nextState);
+            HAL_UART_Transmit(huart,"\r",1,100);
+            break;
         }
     }
     return;
