@@ -373,8 +373,8 @@ static void MX_GPIO_Init(void)
 
   /*Configure GPIO pin : PC0 */
   GPIO_InitStruct.Pin = GPIO_PIN_0;
-  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING_FALLING;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
   /*Configure GPIO pin : LD2_Pin */
@@ -404,6 +404,12 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
   } else {
       __NOP();
   }
+}
+/*void HAL_ADC_ErrorCallback(ADC_HandleTypeDef *hadc) {
+    Error_Handler();
+}*/
+void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart) {
+    Error_Handler();
 }
 /* USER CODE END 4 */
 

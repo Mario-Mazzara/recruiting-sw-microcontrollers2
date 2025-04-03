@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include "stm32f4xx_hal.h"
 
-extern uint32_t CLI_Active;
+extern volatile uint32_t CLI_Active, AVG_Active, Noise_Active;
 
 void cli_init(UART_HandleTypeDef* _huart);
 

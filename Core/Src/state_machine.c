@@ -34,9 +34,14 @@ void listening_handler(void){
     //HAL_UART_Transmit(huart,"Inside listening",20,100);
     /* uint32_t data = read_sensor();
     HAL_UART_Transmit(huart,data,size,100); */
-    send_data("raw");
+    if(AVG_Active && !Noise_Active){
+        send_data("moving average");
+    }else if ( !AVG_Active && Noise_Active ){
+        send_data("random noise");
+    }else {
+        send_data("raw");
+    }
     HAL_Delay(100);
-
 }
 void pause_handler(void){
     //HAL_UART_Transmit(huart,"Inside pause",20,100);
@@ -45,7 +50,7 @@ void wait_request_handler(void){
     //HAL_UART_Transmit(huart,"Inside Wait Request",20,100);
 }
 void warning_handler(void){
-    //HAL_UART_Transmit(huart,"Inside Warning",15,100);
+    HAL_UART_Transmit(huart,"WARNING",7,100);
 }
 
 void LED_PWM_Start(void) {
@@ -137,10 +142,10 @@ void sm_update(Event_t event){
 
             currentState= transitions[i].nextState;
 
-            printEvent(event);
+            /* printEvent(event);
             printState(transitions[i].startingState);
             printState(transitions[i].nextState);
-            HAL_UART_Transmit(huart,"\r",1,100);
+            HAL_UART_Transmit(huart,"\r",1,100); */
             break;
         }
     }

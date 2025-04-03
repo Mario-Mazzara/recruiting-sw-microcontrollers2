@@ -5,6 +5,7 @@
 #include <stdint.h>
 #include "stm32f4xx_hal.h"
 #include <send.h>
+#include <state_machine.h>
 
 static ADC_HandleTypeDef* hadc;
 static UART_HandleTypeDef* huart;
@@ -15,7 +16,9 @@ volatile uint8_t hall_state = 0;
 void send_init(UART_HandleTypeDef* _huart,ADC_HandleTypeDef* _hadc){
     hadc = _hadc;
     huart = _huart;
-    HAL_ADC_Start_DMA(hadc, (uint32_t*)&adc_value, 1);
+    if (HAL_ADC_Start_DMA(hadc, (uint32_t*)&adc_value, 1) != HAL_OK) {
+        Handle_Error();
+    }
 }
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc) {
     if (hadc->Instance == ADC1) {
@@ -50,21 +53,6 @@ void send_data(const char *mode) {
     } else {
         return;
     }
-    snprintf(msg, sizeof(msg), "Mode: %s, ADC: %u, Hall: %d\r\n", mode, value, hall_state);
+    snprintf(msg, sizeof(msg), "%u %d\r\n", value, hall_state);
     HAL_UART_Transmit(huart, (uint8_t*)msg, strlen(msg), HAL_MAX_DELAY);
 }
-
-/* int main(void) {
-    HAL_Init();
-    SystemClock_Config();
-    MX_GPIO_Init();
-    MX_ADC1_Init();
-    MX_USART2_UART_Init();
-
-    HAL_ADC_Start_DMA(&hadc1, (uint32_t*)&adc_value, 1);
-
-    while (1) {
-        send_data("raw");
-        HAL_Delay(100);
-    }
-} */

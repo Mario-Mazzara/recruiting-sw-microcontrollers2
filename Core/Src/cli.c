@@ -2,7 +2,7 @@
 #include "stm32f4xx_hal.h"
 #include <string.h>
 #include <stdio.h>
-uint32_t CLI_Active = 0, AVG_Active = 0, Noise_Active = 0;
+volatile uint32_t CLI_Active = 0, AVG_Active = 0, Noise_Active = 0;
 
 #define CMD_BUFFER_SIZE 128
 
@@ -20,10 +20,9 @@ void cli_init(UART_HandleTypeDef* _huart){
 
 void processCommand(char *cmd)
 {
-    // Example: Echo the received command back to the sender
-    char response[128];
+    /* char response[128];
     snprintf(response, sizeof(response), "Received command: %s\r\n", cmd);
-    HAL_UART_Transmit(huart, (uint8_t *)response, strlen(response), HAL_MAX_DELAY);
+    HAL_UART_Transmit(huart, (uint8_t *)response, strlen(response), HAL_MAX_DELAY); */
 
     // Here, add your command parsing and handling logic.
     // For example:
